@@ -8,7 +8,13 @@ resource "aws_docdb_cluster" "main" {
   skip_final_snapshot     = "var.skip_final_snapshot"
   db_subnet_group_name =  aws_docdb_subnet_group.main.name
   kms_key_id = data.aws_kms_key.key.key_id
-  storage_encrypted = true
+  storage_encrypted = var.storage_encrypted
+}
+resource "aws_docdb_cluster_instance" "cluster_instances" {
+  count              = 2
+  identifier         = "${var.env}-docdb-${count.index}"
+  cluster_identifier = aws_docdb_cluster.main.id
+  instance_class     = var.instance_class
 }
 
 resource "aws_docdb_subnet_group" "main" {
